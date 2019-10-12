@@ -23,6 +23,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home',['posts'=>auth()->user()->posts()->paginate(10)]);
+        return view('home',['posts'=>auth()->user()->posts()->paginate(10),'users' => \App\User::paginate(10)]);
+    }
+
+    public function show(\App\User $user){
+        return view('users.profile',compact('user'));
     }
 }

@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -10,7 +9,6 @@
                     <a class='btn btn-info' href="{{route('posts.trashed')}}">Trashed</a>
                     <a class='btn btn-info' href="{{route('token.refresh')}}">Refresh Token</a>
                 </div>
-
                 <div class="card-body">
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
@@ -23,6 +21,39 @@
                             {{ session('apiToken') }}
                         </div>
                     @endif
+
+
+                    <!-- users -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($users as $user)
+                                <tr>
+                                    <td><a href="{{route('users.show',$user->id)}}">{{$user->name}}</a></td>
+                                    <td>{{$user->email}}</td>
+                                    <td>
+                                        <a class='btn btn-primary' href="{{route('posts.edit',$user->id)}}">Edit</a>
+                                        <a class='btn btn-danger' 
+                                        onclick="if(confirm('Are you sure want to delete this post?')){
+                                            document.getElementById('delete-form').submit();
+                                        }else return false;"
+                                        >Delete</a>
+                                        <form id="delete-form" action="{{route('posts.destroy',$user->id)}}" method="post">
+                                            @csrf
+                                            @method('delete')
+                                        </form>
+                                    </td>
+                                </tr>
+                                @endforeach
+                        </tbody>
+                    </table>
+                    {{$users->links()}}
 
                     <table class="table table-striped">
                         <thead>

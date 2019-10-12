@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\CategoryPost;
 use App\Events\JoinPostEvent;
 use App\Post;
 use Illuminate\Http\Request;
@@ -10,7 +12,12 @@ class PostController extends Controller
 {
     public function index()
     {
-        return view('posts.index',['posts'=>Post::orderBy('created_at','asc')->paginate(10)]);
+        return view('posts.index'
+        ,['posts'=>Post::withCategories()
+            ->withUserName()
+        ->orderBy('created_at','asc')
+        ->paginate(10)]
+    );
     }
 
     /**
@@ -23,7 +30,7 @@ class PostController extends Controller
         if(!$this->authorize('create-post',Post::class)){
             abort(403,"You have to verify your email!");
         }
-        return view('posts.create');
+        return view('posts.create',['categories'=>\App\Category::all()]);
     }
 
     /**
@@ -35,7 +42,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $credentials = $this->validateRequest($request);
-        auth()->user()->posts()->create($credentials);
+        $post = auth()->user()->posts()->create($credentials);
+        $post->categories()->attach($credentials['category']);
+
         return redirect(route('home'));
     }
 
@@ -43,11 +52,13 @@ class PostController extends Controller
         return $this->validate($request,[
             'title' => 'required|min:3',
             'body' => 'required',
+            'category'=>'required'
             ],
              [
                  'title.required' => "Truong nay la bat buoc!",
                  'title.min' => "Toi thieu 3 ky tu!",
-                 'body.required' => "Truong nay la bat buoc!"
+                 'body.required' => "Truong nay la bat buoc!",
+                 'category.required' => "Toi thieu 1 the loai.",
              ]
         );
     }
@@ -60,7 +71,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        return view('posts.show',['post'=>$post]);
+        return view('posts.show',['post'=>$post,'categories'=>$post->categories]);
     }
 
     /**
@@ -72,7 +83,7 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $this->authorize('update-post',$post);
-        return view('posts.edit',['post'=>$post]);
+        return view('posts.edit',['post'=>$post,'categories'=>Category::all()]);
     }
 
     /**
@@ -89,6 +100,7 @@ class PostController extends Controller
         //     return redirect()->back()->withErrors();
         // }
         $post->update($credentials);
+        $post->categories()->sync($credentials['category']);
         return redirect()->route('home');
     }
 

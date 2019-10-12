@@ -17,34 +17,34 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/update', 'ApiTokenController@update')->name('token.refresh');
-Route::get('/calc', function(){
-    return \App\Comment::find(119)->user()->get();
-});
-Route::get('/findOrFail',function(){
-    return \App\Post::findOrFail(1)->user_id;
-});
-
-Auth::routes(['verify' => true]);
-
+// ====POST=======
 Route::get('/home', 'HomeController@index')->name('home')->middleware('verified');
 Route::prefix('posts/trashed')->group(function(){
     Route::get('/','PostController@getPostsTrashed')->name('posts.trashed');
     Route::get('/{post}','PostController@restorePost')->name('posts.restore');
     Route::get('/forceDelete/{post}','PostController@forceDelete')->name('posts.forceDelete');
 });
+Route::resource('posts','PostController');
+// ======++END_POST========
 
-Route::get('/markAsRead/{notify}',function($notify){
+//=========USER===========
+Route::get('profile/{user}','HomeController@show')->name('users.show');
+Route::get('/update', 'ApiTokenController@update')->name('token.refresh');
+Auth::routes(['verify' => true]);
+
+//======END USER==========
+
+// =====NOTIFICATION========
+Route::get('/markAsRead/{notify}/{post}',function($notify,$post){
     $notification = auth()->user()->notifications()->where('id',$notify)->first();
-    // if($notification){
+    if($notification){
         $notification->markAsRead();
-        return redirect()->back();
-    // }
+        return redirect(route('posts.show',$post));
+    }
 })->name('markAsRead');
 
 Route::get('/markAllAsRead',function(){
     auth()->user()->unreadNotifications->markAsRead();
     return redirect()->back();
 })->name('markAllAsRead');
-
-Route::resource('posts','PostController');
+// =======END_ NOTIFICATION=====

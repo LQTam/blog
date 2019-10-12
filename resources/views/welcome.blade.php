@@ -85,9 +85,7 @@
                 </div>
 
                 <div class="links">
-                    <a class="navbar-brand" href="{{ route('posts.index')}}">
-                        {{  'Post' }}
-                    </a>
+                    <a href="{{route('posts.index')}}">Post</a>
                     <a href="https://laravel.com/docs">Docs</a>
                     <a href="https://laracasts.com">Laracasts</a>
                     <a href="https://laravel-news.com">News</a>

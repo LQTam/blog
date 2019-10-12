@@ -25,7 +25,7 @@
             }
         },
         mounted(){
-            this.postUrl='/posts/'+this.unread.data.post.id;
+            this.postUrl='/markAsRead/'+this.unread.id+'/'+this.unread.data.post.id;
         }
     }
 </script>

@@ -39,6 +39,26 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                                <label for="category" class="col-md-4 col-form-label text-md-right">{{ __('Category') }}</label>
+    
+                                <div class="col-md-6">
+                                    <select id="category" type="text" multiple="multiple" class="form-control @error('category') is-invalid @enderror" name="category[]" value="{{ old('category') }}"  autocomplete="category">
+                                        @foreach($categories as $key=>$cate)
+                                            <option value={{$cate->id}} @foreach ($post->categories as $item)
+                                                {{$cate->id === $item->id ? "selected" : ""}}
+                                            @endforeach>{{$cate->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    
+                                    @error('category')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">

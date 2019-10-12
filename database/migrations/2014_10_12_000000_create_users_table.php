@@ -24,6 +24,7 @@ class CreateUsersTable extends Migration
                         ->nullable()
                         ->default(null);
             $table->rememberToken();
+            $table->tinyInteger('level')->default(2);
             $table->timestamps();
         });
     }

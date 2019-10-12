@@ -34,7 +34,11 @@
                                     <p class="meta">
                                         <span><i class="fa fa-calendar-o mr-2" aria-hidden="true"></i>{{date('M d, Y'),strtotime($post->created_at)}}</span>
                                         <span><i class='fa fa-user mr-2' aria-hidden="true"></i>{{$post->user->name}}</span>
-                                        <span><a href="single.html"><i class="fa fa-folder-o mr-2" aria-hidden="true"></i>Travel</a></span>
+                                        <span>
+                                                @foreach ($post->categories as $category)
+                                                    <a href="single.html"><i class="fa fa-folder-o mr-2" aria-hidden="true"></i>{{$category->name}}</a>
+                                                @endforeach
+                                            </span>
                                         <span><i class="fa fa-comment-o mr-2" aria-hidden="true"></i>5 Comment</span>
                                     </p>
                                 </div>
